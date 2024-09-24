@@ -46,6 +46,9 @@ def main():
     elif args.replace_clip_board:
         clipboard_text = pyperclip.paste().strip()
         if clipboard_text:
+            if clipboard_text.startswith("<span") or clipboard_text.startswith("<br>"):
+                print("Aborting: Detected already colorizzed text in the clipboard.")
+                return
             colorized_text = colorize_text(clipboard_text, lookup_dict)
             pyperclip.copy(colorized_text)
             print("Colorizzed text has been copied back to the clipboard.")
