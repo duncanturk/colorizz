@@ -1,17 +1,14 @@
-{ stdenv
-, fetchFromGitHub
-, python3Packages
-, makeWrapper
-, lib
-, ... }:
+{ pkgs ? import <nixpkgs> {} }:
 
 let
+  inherit (pkgs) stdenv fetchFromGitHub python3Packages makeWrapper lib;
+
   python = python3Packages.python;
   pyperclip = python3Packages.pyperclip;
   tkinter = python3Packages.tkinter;
   sitePackagesPath = builtins.concatStringsSep ":" [
-    "${pyperclip}/${python.libPrefix}/site-packages"
-    "${tkinter}/${python.libPrefix}/site-packages"
+    "${pyperclip}/lib/${python.libPrefix}/site-packages"
+    "${tkinter}/lib/${python.libPrefix}/site-packages"
   ];
 in
 
