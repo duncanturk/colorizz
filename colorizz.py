@@ -13,22 +13,21 @@ def get_default_rules_path():
 
 def load_rules(filepath):
     with open(filepath, 'r') as file:
-        return json.load(file)
-
-
-def get_color_for_char(char, rules):
+        rules = json.load(file)
+    lookup_dict = {}
     for rule in rules:
-        if char in rule["affected_strings"]:
-            return rule["color"]["hex"]
-    return "#000000"
+        for char in rule["affected_strings"]:
+            lookup_dict[char] = rule["color"]["hex"]
+    return lookup_dict
 
 
-def colorize_text(text, rules):
+def colorize_text(text, lookup_dict):
     colored_text = ""
-
     for char in text:
-        hex_color = get_color_for_char(char, rules)
-        if hex_color == "#000000":
+        hex_color = lookup_dict.get(char, None)
+        if char == "\n":
+            colored_text += "<br>"
+        elif hex_color is None:
             colored_text += f'<span style="text-decoration: underline;">{char}</span>'
         else:
             colored_text += f'<span style="color:{hex_color}">{char}</span>'
@@ -39,26 +38,24 @@ def main():
     parser = argparse.ArgumentParser(description="Colorizz every letter in the input string based on predefined rules.")
     parser.add_argument('--rules', type=str, default=get_default_rules_path(), help='Path to the rules JSON file')
     parser.add_argument('--gui', action='store_true', help='Open a GUI to input and colorizz text')
-    parser.add_argument('--clip-board', action='store_true', help='Colorizz the text from the clipboard')
-
+    parser.add_argument('--replace-clip-board', action='store_true', help='Colorizz the text from the clipboard')
     args = parser.parse_args()
-    rules = load_rules(args.rules)
-
+    lookup_dict = load_rules(args.rules)
     if args.gui:
-        launch_gui(rules)
-    elif args.clip_board:
+        launch_gui(lookup_dict)
+    elif args.replace_clip_board:
         clipboard_text = pyperclip.paste().strip()
         if clipboard_text:
-            colorized_text = colorize_text(clipboard_text, rules)
+            colorized_text = colorize_text(clipboard_text, lookup_dict)
             pyperclip.copy(colorized_text)
             print("Colorizzed text has been copied back to the clipboard.")
 
 
-def launch_gui(rules):
+def launch_gui(lookup_dict):
     def on_text_change(event=None):
         input_text = input_text_area.get("1.0", tk.END)
         if input_text.strip():
-            colorized_html = colorize_text(input_text.strip(), rules)
+            colorized_html = colorize_text(input_text.strip(), lookup_dict)
             output_text_area.config(state=tk.NORMAL)
             output_text_area.delete("1.0", tk.END)
             output_text_area.insert(tk.END, colorized_html)
