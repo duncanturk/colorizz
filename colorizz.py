@@ -1,4 +1,5 @@
 import os
+import re
 import argparse
 import json
 import tkinter as tk
@@ -34,6 +35,14 @@ def colorize_text(text, lookup_dict):
     return colored_text
 
 
+def unrizz(clipboard_text):
+    text_without_spans = re.sub(r'<span[^>]*>', '', clipboard_text)
+    text_without_spans = re.sub(r'</span>', '', text_without_spans)
+    unrizzed_text = text_without_spans.replace('<br>', '\n')
+
+    return unrizzed_text
+
+
 def main():
     parser = argparse.ArgumentParser(description="Colorizz every letter in the input string based on predefined rules.")
     parser.add_argument('--rules', type=str, default=get_default_rules_path(), help='Path to the rules JSON file')
@@ -47,8 +56,8 @@ def main():
         clipboard_text = pyperclip.paste()
         if clipboard_text:
             if clipboard_text.startswith("<span") or clipboard_text.startswith("<br>"):
-                print("Aborting: Detected already colorizzed text in the clipboard.")
-                return
+                print("rizz detected - unrizzing")
+                clipboard_text = unrizz(clipboard_text)
             colorized_text = colorize_text(clipboard_text, lookup_dict)
             pyperclip.copy(colorized_text)
             print("Colorizzed text has been copied back to the clipboard.")
