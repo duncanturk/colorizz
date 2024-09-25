@@ -38,13 +38,13 @@ def main():
     parser = argparse.ArgumentParser(description="Colorizz every letter in the input string based on predefined rules.")
     parser.add_argument('--rules', type=str, default=get_default_rules_path(), help='Path to the rules JSON file')
     parser.add_argument('--gui', action='store_true', help='Open a GUI to input and colorizz text')
-    parser.add_argument('--replace-clip-board', action='store_true', help='Colorizz the text from the clipboard')
+    parser.add_argument('--replace-clipboard', action='store_true', help='Colorizz the text from the clipboard')
     args = parser.parse_args()
     lookup_dict = load_rules(args.rules)
     if args.gui:
         launch_gui(lookup_dict)
-    elif args.replace_clip_board:
-        clipboard_text = pyperclip.paste().strip()
+    elif args.replace_clipboard:
+        clipboard_text = pyperclip.paste()
         if clipboard_text:
             if clipboard_text.startswith("<span") or clipboard_text.startswith("<br>"):
                 print("Aborting: Detected already colorizzed text in the clipboard.")
@@ -57,8 +57,8 @@ def main():
 def launch_gui(lookup_dict):
     def on_text_change(event=None):
         input_text = input_text_area.get("1.0", tk.END)
-        if input_text.strip():
-            colorized_html = colorize_text(input_text.strip(), lookup_dict)
+        if input_text:
+            colorized_html = colorize_text(input_text, lookup_dict)
             output_text_area.config(state=tk.NORMAL)
             output_text_area.delete("1.0", tk.END)
             output_text_area.insert(tk.END, colorized_html)

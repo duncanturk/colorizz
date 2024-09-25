@@ -21,14 +21,14 @@ To use the script, you can either run it from the command line or open the GUI f
 #### Command Line Usage
 
 ```sh
-python colorizz.py [--rules RULES_PATH] [--gui] [--replace-clip-board]
+python colorizz.py [--rules RULES_PATH] [--gui] [--replace-clipboard]
 ```
 
 ##### Arguments
 
 - `--rules RULES_PATH`: Path to the JSON file containing colorization rules. If not specified, it defaults to `$XDG_CONFIG_HOME/colorizz/rules.json`.
 - `--gui`: Launch the GUI to input and colorize text interactively.
-- `--replace-clip-board`: Colorize the text from the clipboard and copy the result back to the clipboard.
+- `--replace-clipboard`: Colorize the text from the clipboard and copy the result back to the clipboard.
 
 ##### Examples
 
@@ -43,7 +43,7 @@ python colorizz.py [--rules RULES_PATH] [--gui] [--replace-clip-board]
    Copy some text to your clipboard before running this command:
 
     ```sh
-    python colorizz.py --replace-clip-board
+    python colorizz.py --replace-clipboard
     ```
 
    The colorized version of the text will be copied back to your clipboard.
